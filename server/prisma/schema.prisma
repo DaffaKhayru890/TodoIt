@@ -33,12 +33,13 @@ model User {
 }
 
 model Todo {
-  id        Int        @id @default(autoincrement())
-  title     String
-  status    TodoStatus @default(PENDING)
-  completed Boolean    @default(false)
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
+  id          Int        @id @default(autoincrement())
+  title       String
+  status      TodoStatus @default(PENDING)
+  description String     @db.VarChar(255)
+  completed   Boolean    @default(false)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
 
   // Relation to User
   userId Int

@@ -65,7 +65,12 @@ const postTodo = async (req,res) => {
             data: {
                 userId: value.userId,
                 title: value.title,
+<<<<<<< HEAD
                 status: value.status.toUpperCase(),       
+=======
+                status: value.status.toUpperCase(), 
+                description: value.description,      
+>>>>>>> 2d29c6c (second commit)
                 completed: value.completed,
             }
         });
@@ -114,7 +119,12 @@ const updateTodo = async (req,res) => {
             },
             data: {
                 title: value.title,
+<<<<<<< HEAD
                 status: value.status.toUpperCase(),       
+=======
+                status: value.status.toUpperCase(), 
+                description: value.description,      
+>>>>>>> 2d29c6c (second commit)
                 completed: value.completed,
             }
         })
