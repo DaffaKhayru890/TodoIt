@@ -6,8 +6,6 @@ const getTodos = async (req,res) => {
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 5;
 
-        const body = req.body;
-
         if (page < 1 || limit < 1) return res.status(400).json({error: "Page and limit must be positive integers"})
 
         const skip = (page - 1) * limit;
@@ -16,7 +14,7 @@ const getTodos = async (req,res) => {
             skip: skip,
             take: limit,
             where: {
-                userId: body.userId
+                userId: req.user.id
             },
             orderBy: {
                 id: 'asc',
@@ -40,11 +38,10 @@ const getTodos = async (req,res) => {
 const getTodo = async (req,res) => {
     try{
         const {id} = req.params;
-        const body = req.body;
 
         const todo = await database.db.todo.findFirst({
             where: {
-                userId: body.id,
+                userId: req.user.id,
                 id: parseInt(id),
             }
         });
@@ -63,21 +60,17 @@ const postTodo = async (req,res) => {
 
         await database.db.todo.create({
             data: {
-                userId: value.userId,
+                userId: parseInt(req.user.id),
                 title: value.title,
-<<<<<<< HEAD
                 status: value.status.toUpperCase(),       
-=======
-                status: value.status.toUpperCase(), 
                 description: value.description,      
->>>>>>> 2d29c6c (second commit)
                 completed: value.completed,
             }
         });
 
         res.json({message: "Create todo successfully"});
     }catch(err) {
-        res.json({error: err});
+        res.status(404).json({error: err});
     }
 }
 
@@ -91,7 +84,8 @@ const searchTodos = async (req, res) => {
             where: {
                 title: {
                     contains: title,
-                }
+                },
+                userId: req.user.id,
             },
             orderBy: {
                 createdAt: 'asc',
@@ -114,17 +108,13 @@ const updateTodo = async (req,res) => {
 
         await database.db.todo.update({
             where: {
-                userId: value.userId,
+                userId: req.user.id,
                 id: parseInt(id),
             },
             data: {
                 title: value.title,
-<<<<<<< HEAD
                 status: value.status.toUpperCase(),       
-=======
-                status: value.status.toUpperCase(), 
                 description: value.description,      
->>>>>>> 2d29c6c (second commit)
                 completed: value.completed,
             }
         })
@@ -138,11 +128,10 @@ const updateTodo = async (req,res) => {
 const deleteTodo = async (req,res) => {
     try{
         const {id} = req.params;
-        const body = req.body;
 
         await database.db.todo.delete({
             where: {
-                userId: body.userId,
+                userId: req.user.id,
                 id: parseInt(id),
             }
         }); 

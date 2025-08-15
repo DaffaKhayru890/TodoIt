@@ -32,11 +32,41 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination"
-import React from 'react'
+import React, { useState } from 'react'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import axios from 'axios'
+import { useLocalStorage } from 'react-use'
 
 const Inbox = () => {
+  const [getTodos,setGetTodos] = useState<any[]>([]);
+  const [getAllData,setGetAllData] = useState({});
+
+  const [user,_] = useLocalStorage("User");
+
+  React.useEffect(() => {
+    const getTodos = async () => {
+      try{
+        const fetchTodos = await axios.get(`http://localhost:3000/api/todo`, { 
+          params: {
+            limit: 5,
+            page: 1
+          },
+          headers: {
+            Authorization: `Bearer ${user.jwt}`,
+          }
+         });
+
+        setGetAllData(fetchTodos);
+        setGetTodos(fetchTodos.data.todos);
+      }catch(err) {
+        console.log(err);
+      }
+    }
+
+    getTodos();
+  }, []);
+
   return (
     <div className='px-10'>
       {/* header section */}
@@ -94,9 +124,17 @@ const Inbox = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            <TableRow>
-              
-            </TableRow>
+            {getTodos && getTodos.map((item,index) => (
+              <TableRow>
+                <TableCell key={index}>
+                  <Input type='checkbox' className='w-4 h-4' />
+                </TableCell>
+                <TableCell>{item.title}</TableCell>
+                <TableCell>{item.status}</TableCell>
+                <TableCell>{item.description}</TableCell>
+
+              </TableRow>
+            ))}
           </TableBody>
         </Table>
       </div>

@@ -3,10 +3,13 @@ import cookieParser from 'cookie-parser';
 import public_route from './src/routes/public_route.js';
 import dotenv from 'dotenv';
 import protected_route from './src/routes/protected_route.js';
+import cors from 'cors';
 
 dotenv.config();
 
 const app = express();
+
+app.use(cors());
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

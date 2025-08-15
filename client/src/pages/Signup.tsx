@@ -13,10 +13,33 @@ import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { BsEyeSlash } from "react-icons/bs";
 import { BsEyeSlashFill } from "react-icons/bs";
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import {useForm} from 'react-hook-form';
+import {registerSchema, type RegisterFormData} from '@/schemas/UserSchema';
+import {zodResolver} from '@hookform/resolvers/zod';
+import axios from 'axios';
+import toast from 'react-hot-toast'
 
 const Signup = () => {
-  const [showPassword,setShowPassword] = React.useState<boolean>(false)
+  const [showPassword,setShowPassword] = React.useState<boolean>(false);
+  
+  const navigate = useNavigate();
+
+  const {register,handleSubmit, formState: {errors}} = useForm<RegisterFormData>({resolver: zodResolver(registerSchema)});
+
+  const handleSignup = async (data: RegisterFormData) => {
+    try{
+        await axios.post("http://localhost:3000/api/user/register", data);
+
+        toast.success("Success to created user");
+
+        setTimeout(() => {
+            navigate('/login');
+        }, 3000);
+    }catch(err) {
+        toast.error("Failed to created user")
+    }
+  }
 
   return (
     <div className='flex justify-center items-center h-screen'>
@@ -26,18 +49,21 @@ const Signup = () => {
                 <CardDescription className='text-center'>Create new account to login</CardDescription>
             </CardHeader>
             <CardContent>
-                <form action="" className='mb-3'>
+                <form onSubmit={handleSubmit(handleSignup)} className='mb-3'>
                     <div>
                         <Label htmlFor="username" className='mb-2'>username</Label>
-                        <Input placeholder='your username' />
+                        <Input {...register("username")} placeholder='your username' />
+                        {errors.username && (<p className='text-sm text-red-500'>{errors.username.message}</p>)}
                     </div>
                     <div>
                         <Label htmlFor="email" className='mb-2 mt-2'>Email</Label>
-                        <Input placeholder='example@gmail.com' />
+                        <Input {...register("email")} placeholder='example@gmail.com' />
+                        {errors.email && (<p className='text-sm text-red-500'>{errors.email.message}</p>)}
                     </div>
                     <div className='relative mb-3'>
                         <Label htmlFor="password" className='mb-2 mt-2'>password</Label>
-                        <Input placeholder='***********' type={showPassword ? 'text' : 'password'} />
+                        <Input {...register("password")} placeholder='***********' type={showPassword ? 'text' : 'password'} />
+                        {errors.password && (<p className='text-sm text-red-500'>{errors.password.message}</p>)}
                         
                         <Button type='button' onClick={(e) => setShowPassword(prev => !prev)} variant='ghost' size='icon' className='absolute top-6 right-2 flex items-center'>
                             {showPassword ? (<BsEyeSlash />) : (<BsEyeSlashFill />)}

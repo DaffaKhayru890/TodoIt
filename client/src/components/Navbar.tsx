@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { use, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { cn } from '@/lib/utils';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -11,6 +11,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import axios from 'axios';
+import { useLocalStorage } from 'react-use';
 
 const links = [
     {
@@ -26,6 +28,28 @@ const links = [
 const Navbar = () => {
   const location = useLocation();
   const navigate = useNavigate();
+
+  const [userProfile,setUserProfile] = useState({});
+
+  const [user,_] = useLocalStorage("User");
+  
+  React.useEffect(() => {
+    const getUserProfile = async () => {
+        try{ 
+            const fetchUserProfile = await axios.get(`http://localhost:3000/api/user/${user.id}`, {
+                headers: {
+                    Authorization: `Bearer ${user.jwt}`
+                }
+            });
+
+            setUserProfile(fetchUserProfile.data);
+        }catch(err) {
+            console.log(err);
+        }
+    };
+
+    getUserProfile();
+  }, []);
 
   return (
     <nav className='px-10 h-12 flex justify-between items-center bg-[#FAFAFA] border-b border-gray-200'>
@@ -53,8 +77,8 @@ const Navbar = () => {
                 <AvatarFallback>CN</AvatarFallback>
             </Avatar>
             <div className='flex flex-col'>
-                <h3 className='text-sm m-0'>daffakhayru@gmail.com</h3>
-                <p className='text-sm'>daffakhayru</p>
+                <h3 className='text-sm m-0'>{userProfile.email}</h3>
+                <p className='text-sm'>{userProfile.username}</p>
             </div>
             <DropdownMenu>
                 <DropdownMenuTrigger>

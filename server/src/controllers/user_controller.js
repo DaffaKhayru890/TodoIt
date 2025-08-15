@@ -74,6 +74,22 @@ const login = async (req,res) => {
     }
 }
 
+const getUser = async (req,res) => {
+    try{
+        const {id} = req.params;
+
+        const getUserProfile = await database.db.user.findFirst({
+            where: {
+                id: parseInt(id),
+            }
+        });
+
+        res.status(200).json(getUserProfile)
+    }catch(err) {
+        res.status(400).json({error: err});
+    }
+}
+
 const updateUser = async (req,res) => {
     try{
         const {value,error} = user_validation.updateSchema.validate(req.body);
@@ -118,6 +134,7 @@ const deleteUser = async (req,res) => {
 export default {
     register,
     login,
+    getUser,
     updateUser,
     deleteUser
 }
