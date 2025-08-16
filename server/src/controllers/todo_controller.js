@@ -5,6 +5,7 @@ const getTodos = async (req,res) => {
     try{
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 5;
+        const completed = req.query.completed === "true";
 
         if (page < 1 || limit < 1) return res.status(400).json({error: "Page and limit must be positive integers"})
 
@@ -14,14 +15,19 @@ const getTodos = async (req,res) => {
             skip: skip,
             take: limit,
             where: {
-                userId: req.user.id
+                userId: req.user.id,
+                completed: completed,
             },
             orderBy: {
                 id: 'asc',
             }
         });
 
-        const total = await database.db.todo.count();
+        const total = await database.db.todo.count({
+            where: {
+                completed: completed,
+            }
+        });
 
         res.json({
             page,
@@ -106,6 +112,8 @@ const updateTodo = async (req,res) => {
 
         if (error) return res.status(400).json({ error: error.details[0].message });
 
+        console.log(value.completed);
+
         await database.db.todo.update({
             where: {
                 userId: req.user.id,
@@ -113,7 +121,7 @@ const updateTodo = async (req,res) => {
             },
             data: {
                 title: value.title,
-                status: value.status.toUpperCase(),       
+                status: value.status,       
                 description: value.description,      
                 completed: value.completed,
             }
@@ -121,7 +129,7 @@ const updateTodo = async (req,res) => {
 
         res.json({message: "Update todo successfully"});
     }catch(err) {
-        res.json({error: err});
+        res.json({error: err.message});
     }
 }
 
@@ -141,6 +149,8 @@ const deleteTodo = async (req,res) => {
         res.json({error: err});
     }
 }
+
+
 
 export default {
     getTodos,

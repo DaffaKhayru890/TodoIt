@@ -15,7 +15,7 @@ route.get('/todo/search', todo_controller.searchTodos);
 route.get('/todo', todo_controller.getTodos);
 route.get('/todo/:id', todo_controller.getTodo);
 route.post('/todo', todo_controller.postTodo);
-route.put('/todo/:id', todo_controller.updateTodo);
+route.patch('/todo/:id', todo_controller.updateTodo);
 route.delete('/todo/:id', todo_controller.deleteTodo);
 
 export default {

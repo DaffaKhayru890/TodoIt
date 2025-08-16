@@ -50,8 +50,6 @@ const Login = () => {
             navigate('/dashboard/inbox');
         }, 3000);
     }catch(err) {
-        console.log(err);
-
         if(err.response.data.error === 'User not found') {
             toast.error("User not found");
         }
