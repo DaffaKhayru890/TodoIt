@@ -59,7 +59,6 @@ const Completed = () => {
           }
         });
 
-        console.log(fetchCompletedTodos.data.todos);
         setTodos(fetchCompletedTodos.data.todos)
         setPage(fetchCompletedTodos.data.page);
         setTotalPages(fetchCompletedTodos.data.totalPages);
@@ -90,6 +89,24 @@ const Completed = () => {
   
       return items;
     }
+  
+  const handleDeleteAllCompletedTodos = async () => {
+    try{
+      await axios.delete(`http://localhost:3000/api/todo`, {
+        headers: {
+          Authorization: `Bearer ${user.jwt}`,
+        }
+      });
+
+      toast.success("Success delete all completed todos");
+
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);
+    }catch(err) {
+      console.log(err);
+    }
+  } 
 
   return (
     <div className='px-10'>
@@ -97,36 +114,29 @@ const Completed = () => {
       <div className='flex mb-4 items-center justify-between'>
         <h1 className='py-5 text-3xl font-semibold'>Inbox</h1>
         
-        <Button className='bg-red-500 hover:bg-red-600 cursor-pointer' type='button'>Remove All</Button>
+        <Button disabled={todos.length === 0 ? true : false} onClick={() => handleDeleteAllCompletedTodos()} className='bg-red-500 hover:bg-red-600 cursor-pointer' type='button'>Remove All</Button>
       </div>
       
       {/* table section */}
       <div>
         {todos.length === 0 ? "No completed todos" : <Table>
-          <TableCaption>A list of your todos.</TableCaption>
+          <TableCaption>A list of your completed todos.</TableCaption>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-[20px]">
-                <Input type='checkbox' className='w-4 h-4' />
-              </TableHead>
               <TableHead>Title</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Description</TableHead>
-              <TableHead>Edit</TableHead>
               <TableHead>Delete</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {todos.map((item,index) => (
               <TableRow key={index}>
-                <TableCell key={index}>
-                  <Input type='checkbox' className='w-4 h-4' />
-                </TableCell>
                 <TableCell>{item.title}</TableCell>
                 <TableCell>{item.status}</TableCell>
                 <TableCell>{item.description}</TableCell>
                 <TableCell>
-                  <Button type='button' onClick={() => handleDeleteTodo(item.id)} className='bg-red-500 hover:bg-red-600'>Delete</Button>
+                  <Button type='button' onClick={() => handleDeleteTodo(item.id)} className='bg-red-500 hover:bg-red-600 cursor-pointer'>Delete</Button>
                 </TableCell>
               </TableRow>
             ))}

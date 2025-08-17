@@ -75,7 +75,7 @@ const EditTodo = () => {
             }
         });
 
-        toast.success("Success add new todo");
+        toast.success("Success update new todo");
 
         setTimeout(() => {
             navigate('/dashboard/inbox')

@@ -30,13 +30,14 @@ const Navbar = () => {
   const navigate = useNavigate();
 
   const [userProfile,setUserProfile] = useState({});
+  const [userProfilePicture,setUserProfilePicture] = useState("");
 
   const [user,_] = useLocalStorage("User");
   
   React.useEffect(() => {
     const getUserProfile = async () => {
         try{ 
-            const fetchUserProfile = await axios.get(`http://localhost:3000/api/user/${user.id}`, {
+            const fetchUserProfile = await axios.get(`http://localhost:3000/api/user`, {
                 headers: {
                     Authorization: `Bearer ${user.jwt}`
                 }
@@ -47,9 +48,35 @@ const Navbar = () => {
             console.log(err);
         }
     };
+    
+    const getUserProfilePicture = async () => {
+        const fetchUserProfilePicture = await axios.get(`http://localhost:3000/api/user/profile-picture`, {
+            headers: {
+                Authorization: `Bearer ${user.jwt}`
+            }
+        });
+
+        setUserProfilePicture(`http://localhost:3000/profiles/${fetchUserProfilePicture.data.filename}`);
+    }
 
     getUserProfile();
+    getUserProfilePicture();
   }, []);
+
+  const handleLogout = () => {
+    localStorage.clear();
+    navigate("/login");
+  };
+
+  const getIntialNames = (name: string) => {
+    if (!name || typeof name !== "string") return "?";
+    
+    const parts = name.trim().split("");
+
+    if(parts.length === 1) return parts[0][0].toUpperCase();
+
+    return parts[0][0].toLocaleUpperCase() + parts[parts.length - 1][0].toLocaleUpperCase();
+  }
 
   return (
     <nav className='px-10 h-12 flex justify-between items-center bg-[#FAFAFA] border-b border-gray-200'>
@@ -73,8 +100,8 @@ const Navbar = () => {
         {/* profile */}
         <div className='flex items-center justify-between space-x-3'>
             <Avatar>
-                <AvatarImage src="https://github.com/shadcn.png" />
-                <AvatarFallback>CN</AvatarFallback>
+                <AvatarImage src={userProfilePicture} />
+                <AvatarFallback>{getIntialNames(userProfile.username)}</AvatarFallback>
             </Avatar>
             <div className='flex flex-col'>
                 <h3 className='text-sm m-0'>{userProfile.email}</h3>
@@ -88,7 +115,7 @@ const Navbar = () => {
                     <DropdownMenuLabel>My Account</DropdownMenuLabel>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem onClick={() => navigate('/dashboard/settings')}>Settings</DropdownMenuItem>
-                    <DropdownMenuItem>Logout</DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => handleLogout()}>Logout</DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>
         </div>

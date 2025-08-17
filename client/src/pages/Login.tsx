@@ -29,7 +29,7 @@ interface UserDataFromLogin {
 const Login = () => {
   const [showPassword,setShowPassword] = React.useState<boolean>(false);
 
-  const [_,setUser] = useLocalStorage<UserDataFromLogin>("User", {});
+  const [_,setUser] = useLocalStorage<UserDataFromLogin>("User");
 
   const navigate = useNavigate();
 

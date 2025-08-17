@@ -2,6 +2,7 @@ import database from "../config/database.js";
 import user_validation from "../validations/user_validation.js"
 import jwt from 'jsonwebtoken';
 import bcyrpt from 'bcrypt';
+import path from 'path';
 
 const register = async (req,res) => {
     try{
@@ -76,11 +77,9 @@ const login = async (req,res) => {
 
 const getUser = async (req,res) => {
     try{
-        const {id} = req.params;
-
         const getUserProfile = await database.db.user.findFirst({
             where: {
-                id: parseInt(id),
+                id: req.user.id,
             }
         });
 
@@ -101,11 +100,10 @@ const updateUser = async (req,res) => {
         await database.db.user.update({
             data: {
                 username: value.username,
-                email: value.email,
                 password: hashedPassword,
             },
             where: {
-                email: value.email,
+                email: req.user.email,
             }
         })
 
@@ -115,13 +113,54 @@ const updateUser = async (req,res) => {
     }
 }
 
+const uploadProfileUser = async (req,res) => {
+    try{
+        const getProfilePictureName = await database.db.user.findFirst({
+            where: {
+                email: req.user.email,
+            }
+        })
+
+        if(getProfilePictureName.profile) {
+            
+        }
+
+        const profilePicture = await database.db.user.update({
+            where: {
+                email: req.user.email,
+            },
+            data: {
+                profile: req.file.originalname
+            }
+        });
+
+        
+
+        res.status(200).json({message: "File uploaded succesfully"});
+    }catch(err) {
+        res.status(400).json({error: "Can not upload file"});
+    }
+}
+
+const getProfilePicture = async (req,res) => {
+    try{
+        const getProfilePicture = await database.db.user.findFirst({
+            where: {
+                email: req.user.email,
+            }
+        });
+
+        res.status(200).json({filename: getProfilePicture.profile});
+    }catch (err) {
+        res.status(400).json({error: err});
+    }
+}
+
 const deleteUser = async (req,res) => {
     try{
-        const {email} = req.params;
-
         await database.db.user.delete({
             where: {
-                email: email,
+                email: req.user.email,
             }
         })
 
@@ -136,5 +175,7 @@ export default {
     login,
     getUser,
     updateUser,
+    uploadProfileUser,
+    getProfilePicture,
     deleteUser
 }

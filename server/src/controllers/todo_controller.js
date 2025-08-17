@@ -150,7 +150,19 @@ const deleteTodo = async (req,res) => {
     }
 }
 
+const deleteAllTodo = async (req,res) => {
+    try{
+        await database.db.todo.deleteMany({
+            where: {
+                userId: req.user.id,
+            }
+        });
 
+        res.status(200).json({message: "Delete all todos successfully"})
+    }catch(err) {
+        res.status(400).json({error: err});
+    }
+}
 
 export default {
     getTodos,
@@ -159,4 +171,5 @@ export default {
     searchTodos,
     updateTodo,
     deleteTodo,
+    deleteAllTodo
 }

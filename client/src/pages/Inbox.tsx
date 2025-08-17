@@ -103,7 +103,7 @@ const Inbox = () => {
 
       setTimeout(() => {
         window.location.reload();
-      }, 1000);
+      }, 2000);
     }catch(err) {
       console.log(err);
     }
@@ -120,7 +120,7 @@ const Inbox = () => {
 
       {/* table section */}
       <div>
-        <Table>
+        {getTodos.length === 0 ? "No inbox todos" : <Table>
           <TableCaption>A list of your todos.</TableCaption>
           <TableHeader>
             <TableRow>
@@ -148,11 +148,11 @@ const Inbox = () => {
               </TableRow>
             ))}
           </TableBody>
-        </Table>
+        </Table>}
       </div>
 
       {/* paginations */}
-      <Pagination>
+      {getTodos.length === 0 ? "" : <Pagination>
         <PaginationContent>
           <PaginationItem>
             <PaginationPrevious onClick={() => {
@@ -172,7 +172,7 @@ const Inbox = () => {
             }} className={getPage === getTotalPages ? "opacity-50" : ""} />
           </PaginationItem>
         </PaginationContent>
-      </Pagination>
+      </Pagination>}
     </div>
   )
 }

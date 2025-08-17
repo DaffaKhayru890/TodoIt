@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import {
   Card,
   CardAction,
@@ -11,8 +11,70 @@ import {
 import { Input } from '@/components/ui/input'
 import { Label } from '@radix-ui/react-dropdown-menu'
 import { Button } from '@/components/ui/button'
+import {useForm} from 'react-hook-form';
+import {updateSchema, type updateFormData} from '@/schemas/UserSchema';
+import {zodResolver} from '@hookform/resolvers/zod';
+import axios from 'axios'
+import { useLocalStorage } from 'react-use'
+import toast from 'react-hot-toast'
+import { useNavigate } from 'react-router-dom'
 
 const Settings = () => {
+  const {register,handleSubmit, formState: {errors}} = useForm<updateFormData>({resolver: zodResolver(updateSchema)});
+  
+  const [user,_] = useLocalStorage("User");
+
+  const [file,setFile] = useState("");
+
+  const navigate = useNavigate();
+
+  const handleUpdateUserProfile = async (data: updateFormData) => {
+    try{
+        await axios.patch(`http://localhost:3000/api/user/update`, data, {
+            headers: {
+                Authorization: `Bearer ${user.jwt}`
+            }
+        });
+
+        toast.success("Success update new profile");
+    }catch(err) {
+        console.log(err);
+    }
+  };
+
+  const handleDeleteUser = async () => {
+    try{
+        await axios.delete(`http://localhost:3000/api/user/delete`, {
+            headers: {
+                Authorization: `Bearer ${user.jwt}`,
+            }
+        });
+        
+        localStorage.clear();
+        navigate('/login');
+    }catch(err) {
+
+    }
+  };
+
+  const handleUploadProfilePicture = async () => {
+    const formdata = new FormData();
+    formdata.append("file", file);
+
+    try{
+        const uploadProfilePicture = await axios.patch(`http://localhost:3000/api/user/upload`, formdata, {
+            headers: {
+                Authorization: `Bearer ${user.jwt}`,
+                "Content-Type": "multipart/form-data"
+            }
+        });
+
+        toast.success(uploadProfilePicture.data.message);
+    }catch(err) {
+        console.log(err);
+    }
+  };
+
   return (
     <div className='px-10'>
         {/* title */}
@@ -26,33 +88,43 @@ const Settings = () => {
                     <CardDescription>Edit your username and profile avatar</CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <form action="">
+                    <form onSubmit={handleSubmit(handleUpdateUserProfile)}>
                         <div className='space-y-1 mb-2'>
                             <Label>Username</Label>
-                            <Input type='text' placeholder='your new username' />
+                            <Input {...register('username')} type='text' placeholder='your new username' />
                         </div>
-                        <div className='mb-2'>
-                            <Input type='file'/>
+                        <div className='space-y-1 mb-2'>
+                            <Label>Password</Label>
+                            <Input {...register('password')} type='password' placeholder='**********' />
+                        </div>
+                        <div className='space-y-1 mb-2'>
+                            <Label>Profile Picture</Label>
+                            <Input name='profile' onChange={(e) => setFile(e.target.files[0])} type='file'/>
                         </div>
 
-                        <Button>Update Profile</Button>
+                        <div className='flex justify-between'>
+                            <Button>Update Profile</Button>
+                            <Button onClick={() => handleDeleteUser()} type='button' className='bg-red-500 hover:bg-red-600'>Delete User</Button>
+                        </div>
                     </form>
                 </CardContent>
             </Card>
 
             <Card>
                 <CardHeader>
-                    <CardTitle>Password</CardTitle>
-                    <CardDescription>Change password here</CardDescription>
+                    <CardTitle>Profile</CardTitle>
+                    <CardDescription>Edit your username and profile avatar</CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <form action="">
+                    <form onSubmit={handleSubmit(handleUpdateUserProfile)}>
                         <div className='space-y-1 mb-2'>
-                            <Label>Password</Label>
-                            <Input type='password' placeholder='**********' />
+                            <Label>Profile Picture</Label>
+                            <Input name='profile' onChange={(e) => setFile(e.target.files[0])} type='file'/>
                         </div>
 
-                        <Button>Update Password</Button>
+                        <div className='flex justify-between'>
+                            <Button type='button' onClick={() => handleUploadProfilePicture()}>Update Profile Picture</Button>
+                        </div>
                     </form>
                 </CardContent>
             </Card>

@@ -37,11 +37,6 @@ const updateSchema = Joi.object({
     "string.max": "Username cannot be longer than {#limit} characters",
     "any.required": "Username is required"
   }),
-  email: Joi.string().email().required().messages({
-    "string.min": "Username must be at least {#limit} characters long",
-    "string.max": "Username cannot be longer than {#limit} characters",
-    "any.required": "Email is required"
-  }),
   password: Joi.string().min(6).required().messages({
     "string.min": "Username must be at least {#limit} characters long",
     "string.max": "Username cannot be longer than {#limit} characters",
