@@ -70,8 +70,26 @@ const Settings = () => {
         });
 
         toast.success(uploadProfilePicture.data.message);
+
+        setTimeout(() => {
+            window.location.reload();
+        }, 2000);
     }catch(err) {
         console.log(err);
+    }
+  };
+
+  const handleDeleteProfilePicture = async () => {
+    try{
+        const deleteProfilePicture = await axios.patch(`http://localhost:3000/api/user/profile-picture/delete`, {}, {
+            headers: {
+                Authorization: `Bearer ${user.jwt}`
+            }
+        });
+
+        toast.success(deleteProfilePicture.data.message);
+    }catch(err) {
+
     }
   };
 
@@ -97,10 +115,6 @@ const Settings = () => {
                             <Label>Password</Label>
                             <Input {...register('password')} type='password' placeholder='**********' />
                         </div>
-                        <div className='space-y-1 mb-2'>
-                            <Label>Profile Picture</Label>
-                            <Input name='profile' onChange={(e) => setFile(e.target.files[0])} type='file'/>
-                        </div>
 
                         <div className='flex justify-between'>
                             <Button>Update Profile</Button>
@@ -124,6 +138,7 @@ const Settings = () => {
 
                         <div className='flex justify-between'>
                             <Button type='button' onClick={() => handleUploadProfilePicture()}>Update Profile Picture</Button>
+                            <Button className='bg-red-500 hover:bg-red-600' type='button' onClick={() => handleDeleteProfilePicture()}>Delete Profile Picture</Button>
                         </div>
                     </form>
                 </CardContent>

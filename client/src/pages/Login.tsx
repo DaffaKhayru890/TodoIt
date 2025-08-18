@@ -44,15 +44,14 @@ const Login = () => {
             jwt: response.data.jwt,
         })
 
-        toast.success("Success to login user");
+        toast.success(response.data.message);
 
         setTimeout(() => {
             navigate('/dashboard/inbox');
         }, 3000);
     }catch(err) {
-        if(err.response.data.error === 'User not found') {
-            toast.error("User not found");
-        }
+        toast.error("Failed to login user");
+        console.log(err);
     }
   }
 
@@ -80,7 +79,7 @@ const Login = () => {
                         </Button>
                     </div>
 
-                    <Button className='cursor-pointer'>Signup</Button>
+                    <Button className='cursor-pointer'>Login</Button>
                 </form>
 
                 <Link className='block text-center' to='/signup'>

@@ -75,12 +75,13 @@ const EditTodo = () => {
             }
         });
 
-        toast.success("Success update new todo");
+        toast.success("Success update todo");
 
         setTimeout(() => {
             navigate('/dashboard/inbox')
         }, 2000);
     }catch(err) {
+        toast.error("Failed to update todo")
         console.log(err);
     }
   }
@@ -89,8 +90,8 @@ const EditTodo = () => {
     <div className='px-10'>
         <h1 className='py-5 text-3xl font-semibold'>Update Todo</h1>
 
-        <div className='flex justify-center'>
-            <Card className='max-w-full'>
+        <div>
+            <Card>
                 <CardHeader>
                     <CardTitle>Add Todo</CardTitle>
                     <CardDescription>Card Description</CardDescription>
@@ -120,7 +121,6 @@ const EditTodo = () => {
                                         <SelectContent>
                                             <SelectItem value="PENDING">PENDING</SelectItem>
                                             <SelectItem value="IN_PROGRESS">IN PROGRESS</SelectItem>
-                                            <SelectItem value="COMPLETED">COMPLETED</SelectItem>
                                         </SelectContent>
                                     </Select>
                                 )}

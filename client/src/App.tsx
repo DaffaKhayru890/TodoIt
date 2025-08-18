@@ -1,5 +1,5 @@
-import React from 'react'
-import { Route, Routes } from 'react-router-dom'
+import React, { useEffect } from 'react'
+import { Route, Routes, useNavigate } from 'react-router-dom'
 
 import AuthLayout from './layouts/AuthLayout'
 import DashboardLayout from './layouts/DashboardLayout';
@@ -15,6 +15,14 @@ const AddTodo = React.lazy(() => import('@/pages/AddTodo'));
 const EditTodo = React.lazy(() => import('@/pages/EditTodo'));
 
 const App = () => {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if(window.location.pathname === '/') {
+      navigate('/login');
+    }
+  }, []);
+
   return (
     <Routes>
       <Route path='/' element={

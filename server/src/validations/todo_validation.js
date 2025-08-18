@@ -40,8 +40,8 @@ const updateSchema = Joi.object({
       'any.required': 'Description is required',
     }),
 
-    status: Joi.string().valid('PENDING', 'IN_PROGRESS', 'COMPLETED').messages({
-      'any.only': 'Status must be one of [pending, in-progress, completed]',
+    status: Joi.string().valid('PENDING', 'IN_PROGRESS').messages({
+      'any.only': 'Status must be one of [pending, in_progress]',
       'any.required': 'Status is required',
     }),
 

@@ -29,15 +29,16 @@ const Signup = () => {
 
   const handleSignup = async (data: RegisterFormData) => {
     try{
-        await axios.post("http://localhost:3000/api/user/register", data);
+        const signup = await axios.post("http://localhost:3000/api/user/register", data);
 
-        toast.success("Success to created user");
+        toast.success(signup.data.message);
 
         setTimeout(() => {
             navigate('/login');
         }, 3000);
     }catch(err) {
         toast.error("Failed to created user")
+        console.log(err);
     }
   }
 

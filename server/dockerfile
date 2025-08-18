@@ -1,0 +1,34 @@
+# ---------- STAGE 1: Dependencies ----------
+FROM node:20-alpine AS deps
+
+WORKDIR /app
+
+# Copy package files and install dependencies
+COPY package*.json ./
+RUN npm install
+
+# Copy prisma schema + migrations and generate client
+COPY prisma ./prisma
+RUN npx prisma generate
+
+
+# ---------- STAGE 2: Production ----------
+FROM node:20-alpine AS production
+
+WORKDIR /app
+
+# Copy node_modules and prisma client from deps
+COPY --from=deps /app/node_modules ./node_modules
+COPY --from=deps /app/prisma ./prisma
+
+# Copy the rest of the application
+COPY . .
+
+# Copy environment variables
+COPY .env ./
+
+# Expose API port
+EXPOSE 3000
+
+# Run Prisma migrations at startup, then start server
+CMD ["sh", "-c", "npx prisma migrate deploy && node app.js"]

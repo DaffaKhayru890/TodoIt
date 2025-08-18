@@ -2,7 +2,7 @@ import database from "../config/database.js";
 import user_validation from "../validations/user_validation.js"
 import jwt from 'jsonwebtoken';
 import bcyrpt from 'bcrypt';
-import path from 'path';
+import fs from 'fs';
 
 const register = async (req,res) => {
     try{
@@ -122,10 +122,17 @@ const uploadProfileUser = async (req,res) => {
         })
 
         if(getProfilePictureName.profile) {
-            
+            fs.unlink("profiles/" + getProfilePictureName.profile, (err) => {
+                if(err) {
+                    console.log("Failed delete previous file");
+                    return;
+                }
+
+                console.log("file deleted succesfully");
+            });
         }
 
-        const profilePicture = await database.db.user.update({
+        await database.db.user.update({
             where: {
                 email: req.user.email,
             },
@@ -134,11 +141,43 @@ const uploadProfileUser = async (req,res) => {
             }
         });
 
-        
-
         res.status(200).json({message: "File uploaded succesfully"});
     }catch(err) {
         res.status(400).json({error: "Can not upload file"});
+    }
+}
+
+const deleteProfilePicture = async (req,res) => {
+    try{
+        const getProfilePictureName = await database.db.user.findFirst({
+            where: {
+                email: req.user.email,
+            }
+        })
+
+        if(getProfilePictureName.profile) {
+            fs.unlink("profiles/" + getProfilePictureName.profile, (err) => {
+                if(err) {
+                    console.log("Failed delete previous file");
+                    return;
+                }
+
+                console.log("file deleted succesfully");
+            });
+        }
+
+        await database.db.user.update({
+            where: {
+                email: req.user.email,
+            },
+            data: {
+                profile: null
+            }
+        });
+
+        res.status(200).json({message: "Delete profile succesfully"});
+    }catch(err) {
+        res.status(200).json({message: "Delete profile failed"});
     }
 }
 
@@ -177,5 +216,6 @@ export default {
     updateUser,
     uploadProfileUser,
     getProfilePicture,
+    deleteProfilePicture,
     deleteUser
 }

@@ -15,6 +15,7 @@ route.patch('/user/update', user_controller.updateUser);
 route.get('/user/', user_controller.getUser)
 route.patch('/user/upload', upload.single("file"),user_controller.uploadProfileUser);
 route.get('/user/profile-picture', user_controller.getProfilePicture);
+route.patch('/user/profile-picture/delete', user_controller.deleteProfilePicture);
 route.delete('/user/delete', user_controller.deleteUser);
 
 route.get('/todo/search', todo_controller.searchTodos);

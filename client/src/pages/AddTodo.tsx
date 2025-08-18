@@ -43,18 +43,19 @@ const AddTodo = () => {
     try{
         console.log(data);
 
-        await axios.post(`http://localhost:3000/api/todo`, data, {
+        const addTodo = await axios.post(`http://localhost:3000/api/todo`, data, {
             headers: {
                 Authorization: `Bearer ${user.jwt}`
             }
         });
 
-        toast.success("Success add new todo");
+        toast.success(addTodo.data.message);
 
         setTimeout(() => {
             navigate('/dashboard/inbox')
         }, 2000);
     }catch(err) {
+        toast.error("Failed to add todo");
         console.log(err);
     }
   }
@@ -63,8 +64,8 @@ const AddTodo = () => {
     <div className='px-10'>
         <h1 className='py-5 text-3xl font-semibold'>Add Todo</h1>
 
-        <div className='flex justify-center'>
-            <Card className='max-w-full'>
+        <div>
+            <Card>
                 <CardHeader>
                     <CardTitle>Add Todo</CardTitle>
                     <CardDescription>Card Description</CardDescription>
@@ -94,7 +95,6 @@ const AddTodo = () => {
                                         <SelectContent>
                                             <SelectItem value="PENDING">PENDING</SelectItem>
                                             <SelectItem value="IN_PROGRESS">IN PROGRESS</SelectItem>
-                                            <SelectItem value="COMPLETED">COMPLETED</SelectItem>
                                         </SelectContent>
                                     </Select>
                                 )}
