@@ -40,11 +40,9 @@ const Completed = () => {
         }
       });
 
-      toast.success("Delete success");
+      setTodos(prev => prev.filter(todo => todo.id !== todoId));
 
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000);
+      toast.success("Delete success");
     }catch(err) {
       console.log(err);
     }
@@ -68,7 +66,7 @@ const Completed = () => {
     }
 
     getCompletedTodos();
-  }, []);
+  }, [todos]);
 
   const getPagesItems = () => {
       const items= [];
@@ -98,11 +96,9 @@ const Completed = () => {
         }
       });
 
+      setTodos([]);
+      
       toast.success("Success delete all completed todos");
-
-      setTimeout(() => {
-        window.location.reload();
-      }, 2000);
     }catch(err) {
       console.log(err);
     }

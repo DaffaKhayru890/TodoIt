@@ -26,6 +26,7 @@ import { useNavigate } from 'react-router-dom'
 import {useForm,Controller} from 'react-hook-form';
 import {updateCompletedSchema, type updateCompletedFormData} from '@/schemas/TodoSchema';
 import { Checkbox } from "@/components/ui/checkbox"
+import toast from 'react-hot-toast'
 
 const Inbox = () => {
   const [getTodos,setGetTodos] = useState<any[]>([]);
@@ -36,12 +37,6 @@ const Inbox = () => {
   const [user,_] = useLocalStorage("User");
 
   const navigate = useNavigate();
-
-  const {control, handleSubmit} = useForm<updateCompletedFormData>({
-    defaultValues: {
-      completed: false,
-    }
-  });
 
   React.useEffect(() => {
     const getTodos = async () => {
@@ -65,7 +60,7 @@ const Inbox = () => {
     }
 
     getTodos();
-  }, [getPage]);
+  }, [getPage,getTodos]);
 
   const handleUpdateTodo = async (todoId: number) => {
     navigate(`/dashboard/edit/${todoId}`);
@@ -99,15 +94,13 @@ const Inbox = () => {
         }
       });
 
-      console.log(val);
-
-      setTimeout(() => {
-        window.location.reload();
-      }, 2000);
+      toast.success("Success update completed todo");
     }catch(err) {
       console.log(err);
     }
   }
+
+  console.log(getTodos);
 
   return (
     <div className='px-10'>
@@ -136,7 +129,16 @@ const Inbox = () => {
               <TableRow key={index}>
                 <TableCell key={index}>
                   <Checkbox 
-                    onCheckedChange={(val) => handleUpdateCompletedTodo(item.id,val)}
+                    checked={item.completed}
+                    onCheckedChange={(val) => {
+                      const checked = val === true;
+                      
+                      setGetTodos(prev => [...prev.map(todo =>
+                        todo.id === item.id ? { ...todo, completed: checked } : todo
+                      )]);
+
+                      handleUpdateCompletedTodo(item.id,checked);
+                    }}
                   />
                 </TableCell>
                 <TableCell>{item.title}</TableCell>
