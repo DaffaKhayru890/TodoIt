@@ -121,7 +121,7 @@ const uploadProfileUser = async (req,res) => {
             }
         })
 
-        if(getProfilePictureName.profile) {
+        if(getProfilePictureName.profile != null) {
             fs.unlink("profiles/" + getProfilePictureName.profile, (err) => {
                 if(err) {
                     console.log("Failed delete previous file");

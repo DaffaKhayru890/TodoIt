@@ -11,13 +11,15 @@ route.use(auth_middleware.authenticateJWT);
 
 const upload = multer({storage})
 
+// user route
+route.get('/user', user_controller.getUser)
 route.patch('/user/update', user_controller.updateUser);
-route.get('/user/', user_controller.getUser)
-route.patch('/user/upload', upload.single("file"),user_controller.uploadProfileUser);
-route.get('/user/profile-picture', user_controller.getProfilePicture);
-route.patch('/user/profile-picture/delete', user_controller.deleteProfilePicture);
 route.delete('/user/delete', user_controller.deleteUser);
+route.post('/user/profile-picture', upload.single("file"),user_controller.uploadProfileUser);
+route.get('/user/profile-picture', user_controller.getProfilePicture);
+route.delete('/user/profile-picture/delete', user_controller.deleteProfilePicture);
 
+// todos route
 route.get('/todo/search', todo_controller.searchTodos);
 route.get('/todo', todo_controller.getTodos);
 route.get('/todo/:id', todo_controller.getTodo);

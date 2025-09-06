@@ -62,7 +62,7 @@ const Settings = () => {
     formdata.append("file", file);
 
     try{
-        const uploadProfilePicture = await axios.patch(`http://localhost:3000/api/user/upload`, formdata, {
+        const uploadProfilePicture = await axios.post(`http://localhost:3000/api/user/profile-picture`, formdata, {
             headers: {
                 Authorization: `Bearer ${user.jwt}`,
                 "Content-Type": "multipart/form-data"
@@ -81,7 +81,7 @@ const Settings = () => {
 
   const handleDeleteProfilePicture = async () => {
     try{
-        const deleteProfilePicture = await axios.patch(`http://localhost:3000/api/user/profile-picture/delete`, {}, {
+        const deleteProfilePicture = await axios.delete(`http://localhost:3000/api/user/profile-picture/delete`, {
             headers: {
                 Authorization: `Bearer ${user.jwt}`
             }
