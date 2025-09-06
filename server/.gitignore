@@ -3,3 +3,9 @@ node_modules
 .env
 
 /src/generated/prisma
+
+# profiles folder 
+profiles
+
+# migrations files
+/prisma/migrations
