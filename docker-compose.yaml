@@ -1,5 +1,3 @@
-version: '3.9'
-
 services:
   db:
     image: mysql:8.0
@@ -9,12 +7,12 @@ services:
       MYSQL_ROOT_PASSWORD: daffa123
       MYSQL_DATABASE: todoit
     ports:
-      - "3307:3306"
+      - "3306:3306"
     networks:
       - app-network
     healthcheck:
       test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
-      interval: 20s
+      interval: 4s
       timeout: 5s
       retries: 10
 
